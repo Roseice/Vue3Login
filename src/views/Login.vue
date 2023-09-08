@@ -8,7 +8,7 @@
                     </v-alert>
                     <v-text-field v-model="formData.email" :rules="emailRules" label="Email" required data-test="email"></v-text-field>
                     <v-text-field v-model="formData.password" :append-icon="pwShow ? 'mdi-eye' : 'mdi-eye-off'" :rules="[rules.required, rules.min]"
-                    :type="pwShow ? 'text' : 'password'" name="input-10-1" label="Password" hint="At least 8 characters" counter @click:append="pwShow = !pwShow"
+                    :type="pwShow ? 'text' : 'password'" name="input-10-1" label="Password" hint="At least 6 characters" counter @click:append="pwShow = !pwShow"
                     data-test="password"></v-text-field>
                     <v-spacer></v-spacer>
                     <v-btn x-large block :disabled="!valid" color="success" @click="login" data-test="loginBtn">
@@ -35,17 +35,21 @@ const emailRules = [
 ];
 const rules = {
     required: (value) => !!value || "Required",
-    min: (v) => (v && v.length >= 8) || "Min 8 characters",
+    min: (v) => (v && v.length >= 6) || "Min 6 characters",
 };
 const login = () => {
-    // 這邊只是為了方便理解，實際上應該要呼叫 api
-    if (
-    formData.email === "baoboa@mail.com" &&
-    formData.password === "baobaocute"
-    ) {
-    router.push("/home");
-    } else {
+  if (formData.email === "admin@gmail.com" && formData.password === "123456") {
+    setCookie("authToken", "your-auth-token-value", 1);
+    router.push("/");
+  } else {
     loginFail.value = true;
-    }
+  }
+};
+
+const setCookie = (name, value, days) => {
+  const date = new Date();
+  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+  const expires = "expires=" + date.toUTCString();
+  document.cookie = name + "=" + value + "; " + expires + "; path=/";
 };
 </script>
