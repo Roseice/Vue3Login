@@ -21,8 +21,8 @@
                   :type="pwShow ? 'text' : 'password'" name="input-10-1" label="Password" hint="At least 6 characters" counter @click:append="pwShow = !pwShow"
                   data-test="password"></v-text-field>
                   <v-spacer></v-spacer>
-                  <v-text-field v-model="formData.inpcaptcha" label="請輸入驗證碼,區分大小寫" required></v-text-field>
-                  <canvas ref="domRef" width="152" height="40" class="cursor-pointer" @click="getImgCode"></canvas>
+                  <v-text-field v-model="formData.inpcaptcha" label="請輸入驗證碼,不區分大小寫" required></v-text-field>
+                  <canvas ref="domRef" width="300" height="50" class="cursor-pointer" @click="getImgCode"></canvas>
                   <v-btn x-large block :disabled="!valid" color="pink-accent-1" @click="login" data-test="loginBtn">
                   Login
                   </v-btn>
@@ -60,7 +60,7 @@ const rules = {
 
 //登入
 const login = () => {
-  if (formData.inpcaptcha === formData.captcha) {
+  if (formData.inpcaptcha === formData.captcha.toLowerCase()) {
     captchaFail.value = false;
     if (formData.email === "admin@gmail.com" && formData.password === "123456") {
       loginFail.value = false;
@@ -90,29 +90,25 @@ const getImgCode = () => {
       // 清空Canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.font = "24px Arial"; // 字體字號
+  ctx.font = "36px Arial"; // 字體字號
   ctx.fillStyle = "black"; // 顏色
-
   // 生成隨機英數字
-  const captchaText = generateCaptchaText(); // 你需要实现一个生成验证码文本的函数
-
+  const captchaText = generateCaptchaText();
   // 将验证码文本绘制在Canvas上
-  ctx.fillText(captchaText, 20, 30);
-
+  ctx.fillText(captchaText, 100, 30);
   // 生成干擾線
   drawRandomLines(ctx, canvas.width, canvas.height);
   };
 }
+
+// 生成6個隨機英數字
 const generateCaptchaText = () => {
-  // 生成6個隨機英數字
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let captcha = "";
   for (let i = 0; i < 6; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    captcha += characters.charAt(randomIndex);
-    formData.captcha = captcha;
+    captcha += characters.charAt(Math.floor(Math.random() * characters.length));
+    formData.captcha = captcha.toLowerCase();
   }
-  console.log(formData.captcha)
   return captcha;
 };
 //繪製干擾線
